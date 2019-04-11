@@ -93,10 +93,10 @@ def autoupdate_text():
     val = request.args.get('value', None)
 
     if(request.method == 'POST'):
-        autofill.autoupdate_texti(idd,val)
         message = Markup("<strong> Autoupdate is successful , go to details to watch new details.</strong>")
         flash(message)
-        return render_template("autoupdate.html")
+        print("gggggg")
+        return autofill.autoupdate_texti(idd,val)
     else:
         return autofill.autoupdate_texti(idd,val)
 

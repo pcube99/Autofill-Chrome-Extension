@@ -1,4 +1,5 @@
 var flag = [];
+var updateflag = [];
 var update_data =[];
 
 function httpGetAsync(theUrl, callback)
@@ -145,6 +146,7 @@ function documentEvents1() {
     console.log(data1)
     for(var i =0;i<count;i++){
       flag.push(0);
+      updateflag.push(0);
     }
     console.log(flag);
     var i,j;
@@ -184,21 +186,24 @@ function documentEvents2() {
 }
 
 async function autoupdate_detail(count,i) {
-  var flag=0;
+  var fla=0;
   for(var j=0;j<count;j++){
     await timer(500);
-    if(!data[i]['area-label'].includes(data1[j]) || !data[i]['dname'].includes(data1[j]) || !data[i]['name'].includes(data1[j]) ){
-      flag=1;
+    if((!data[i]['area-label'].includes(data1[j]) || !data[i]['dname'].includes(data1[j]) || !data[i]['name'].includes(data1[j])) && updateflag[i]==0 ){
+      fla=1;
+      updateflag[i]=1;
+      break;
     }
   }
     if(flag){
+      await timer(1000);
       chrome.storage.local.set({curr : data[i]['id']},function(){
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
           chrome.storage.local.get(['curr'],function(result1){
               console.log(i + " " + result1.curr);
               chrome.tabs.executeScript(
                   tabs[0].id,
-                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('GET', 'https://afss.herokuapp.com/autoupdate?id=' + document.getElementById('"+result1.curr+"') + &value= + document.getElementById('"+result1.curr+"').value, false); xmlHttp.send(null);"});
+                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=' + document.getElementById('"+result1.curr+"') + '&value=' + document.getElementById('"+result1.curr+"').value, false); xmlHttp.send(null);"});
                 
         });    
       });
