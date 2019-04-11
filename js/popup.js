@@ -12,7 +12,12 @@ function httpGetAsync(theUrl, callback)
     xmlHttp.open("GET", theUrl, false); // true for asynchronous 
     xmlHttp.send(null);
 }
-
+function httpGetAsync1(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", theUrl, false); // true for asynchronous 
+    xmlHttp.send(null);
+}
 chrome.storage.local.get(['islogin'], function(result) {
   if(result.islogin){
     document.getElementById('container').style.display = "none";
@@ -179,22 +184,30 @@ function documentEvents2() {
 }
 
 async function autoupdate_detail(count,i) {
+  var flag=0;
   for(var j=0;j<count;j++){
-    await timer(1000);
-    chrome.storage.local.set({curr : data[i]['id']},function(){
+    await timer(500);
+    if(!data[i]['area-label'].includes(data1[j]) || !data[i]['dname'].includes(data1[j]) || !data[i]['name'].includes(data1[j]) ){
+      flag=1;
+    }
+  }
+    if(flag){
+      chrome.storage.local.set({curr : data[i]['id']},function(){
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
           chrome.storage.local.get(['curr'],function(result1){
               console.log(i + " " + result1.curr);
               chrome.tabs.executeScript(
                   tabs[0].id,
-                  {code: "update_data.append(document.getElementById('"+result1.curr+"').value) "});
+                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('GET', 'https://afss.herokuapp.com/autoupdate?id=' + document.getElementById('"+result1.curr+"') + &value= + document.getElementById('"+result1.curr+"').value, false); xmlHttp.send(null);"});
                 
         });    
       });
     
   });
         await timer(2000);
-  }
+}
+else return;
+
 }
 
 

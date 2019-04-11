@@ -81,33 +81,8 @@ def func(link):
     print(html_data)
     print(atts)
     return reponse
-def autoupdate_texti():
+def autoupdate_texti(idd, value):
     users = mongo.db.users
-    existing_user = users.find_one({'email' : session['email']})
-    #print(html_data)
-    for i in html_data:
-        flag=0
-        try:
-            val =browser.find_element_by_id(i['id']).get_attribute('value')
-
-            for j in existing_user:
-                if('password' in str(j)):
-                    continue
-                if(str(j) in i['dname']):
-                    flag=1
-                    break
-            if(flag==0):
-               # print(val)
-                #existing_user.insert({i['name'] : val})
-                if('password' in i['dname']):
-                    link = browser.current_url
-                   # print(str(link).split('.')[0])
-                    users.update({"email": existing_user["email"]}, {"$set": {str(link).split('.')[0]: val}})
-                else:       
-                    users.update({"email": existing_user["email"]}, {"$set": {i['name'] : val}})
-                atts.append(i['name'])
-               # print("Successful")
-        except:
-            time.sleep(1)
-    #print(html_data)
+    existing_user = users.find_one({'email' : session['email']})  
+    users.update({"email": existing_user["email"]}, {"$set": {idd : value}})
     return 'OK'

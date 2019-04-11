@@ -89,11 +89,16 @@ def autofill_text():
          
 @app.route('/autoupdate', methods=['POST', 'GET'])
 def autoupdate_text():
+    idd = request.args.get('id', None)
+    val = request.args.get('value', None)
+
     if(request.method == 'POST'):
-        autofill.autoupdate_texti()
+        autofill.autoupdate_texti(idd,val)
         message = Markup("<strong> Autoupdate is successful , go to details to watch new details.</strong>")
         flash(message)
         return render_template("autoupdate.html")
+    else:
+        return autofill.autoupdate_texti(idd,val)
 
 @app.route('/details', methods=['POST', 'GET'])
 def details():
