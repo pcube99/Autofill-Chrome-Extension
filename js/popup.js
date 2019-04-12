@@ -4,10 +4,11 @@ var update_data =[];
 var url;
 var data,data1;
 var count=0;
-
+var boolemail =false;
+var boolpassword = false;
 function url_convert(url){
   var website_url = url.split('//').pop().split('/')[0];
-  return website_url.split(".").join("_");
+  return website_url.split(".").join("");
 }
 function httpGetAsync(theUrl, callback)
 {
@@ -38,8 +39,15 @@ function timer(ms) {
 
 async function fill(data, data1,xx ){
   for(var yy=0;yy<data.length;yy++){
+    if(data1[xx] == 'email' && boolemail==true)
+    continue;
+
+    if(data1[xx] == 'password' && boolpassword==true)
+    continue;
+
     if(data[yy]['area-label'].includes(data1[xx]) || data[yy]['dname'].includes(data1[xx]) || data[yy]['name'].includes(data1[xx]) ){
       // console.log(data1[i])
+
        if(flag[yy]==0){ 
          flag[yy] = 1;
          console.log(data[yy]['dname'].includes(data1[xx]));
@@ -158,6 +166,59 @@ function documentEvents1() {
         
       }
     });
+
+    //add here
+    var fill_website_email = 'email' + url_convert(url);
+    var fill_website_password = 'password' + url_convert(url);
+
+    
+    for(var i=0;i<data1.length;i++){
+      if(fill_website_email==data1[i]){
+        var temp =i;
+        boolemail=true;
+        console.log("i is" + i);
+        console.log(data1);
+        chrome.storage.local.get(['login_response'],function(resultt){
+          console.log(JSON.parse(resultt.login_response));
+          console.log("i isss "+i);
+          console.log(JSON.parse(resultt.login_response)[temp]);
+        chrome.storage.local.set({data_website_email : JSON.parse(resultt.login_response)[temp][data1[temp]]},  function(){
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.storage.local.get(['data_website_email'],function(new_fill_website_email){
+                chrome.tabs.executeScript(
+                    tabs[0].id,
+                    {code: "document.getElementsByName('email')[0].value = '"+new_fill_website_email.data_website_email+"';"});
+            
+        });
+      });
+      });
+    });
+      }
+      
+      if(fill_website_password == data1[i]){
+      var temp1 =i;
+      boolpassword=true;
+        console.log("i is" + i);
+        console.log(data1);
+        chrome.storage.local.get(['login_response'],function(resultt){
+          console.log(JSON.parse(resultt.login_response));
+          console.log("i isss "+i);
+          console.log(JSON.parse(resultt.login_response)[temp1]);
+        chrome.storage.local.set({data_website_password : JSON.parse(resultt.login_response)[temp1][data1[temp1]]},  function(){
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.storage.local.get(['data_website_password'],function(new_fill_website_password){
+                chrome.tabs.executeScript(
+                    tabs[0].id,
+                    {code: "document.getElementsByName('password')[0].value = '"+new_fill_website_password.data_website_password+"';"});
+            
+        });
+      });
+      });
+    });
+      }
+      
+    }
+
   // you can add listeners for other objects ( like other buttons ) here 
 });
 }
@@ -276,6 +337,7 @@ function documentEvents3() {
         console.log(data1);
 
         var website_url = url_convert(url);
+        var website_password =url_convert(url) ;
         console.log(website_url);
         chrome.storage.local.set({website_url : website_url},  function(){
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -283,11 +345,23 @@ function documentEvents3() {
 
               chrome.tabs.executeScript(
                   tabs[0].id,
-                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=email_' +'"+ website.website_url+"'  + '&value=' + document.getElementsByName('email')[0].value, false); xmlHttp.send(null);"});
+                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=email' +'"+ website.website_url+"'  + '&value=' + document.getElementsByName('email')[0].value, false); xmlHttp.send(null);"});
           
       });
     });
     });
+
+    chrome.storage.local.set({website_password : website_password},  function(){
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.storage.local.get(['website_password'],function(website){
+
+            chrome.tabs.executeScript(
+                tabs[0].id,
+                {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=password' +'"+ website.website_password+"'  + '&value=' + document.getElementsByName('password')[0].value, false); xmlHttp.send(null);"});
+        
+    });
+  });
+  });
   });
   console.log("out ");
 
