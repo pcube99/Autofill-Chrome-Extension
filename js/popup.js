@@ -1,7 +1,14 @@
 var flag = [];
 var updateflag = [];
 var update_data =[];
+var url;
+var data,data1;
+var count=0;
 
+function url_convert(url){
+  var website_url = url.split('//').pop().split('/')[0];
+  return website_url.split(".").join("_");
+}
 function httpGetAsync(theUrl, callback)
 {
     var xmlHttp = new XMLHttpRequest();
@@ -10,12 +17,6 @@ function httpGetAsync(theUrl, callback)
             callback(xmlHttp.responseText);
     }
     console.log(xmlHttp.responseText)
-    xmlHttp.open("GET", theUrl, false); // true for asynchronous 
-    xmlHttp.send(null);
-}
-function httpGetAsync1(theUrl)
-{
-    var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", theUrl, false); // true for asynchronous 
     xmlHttp.send(null);
 }
@@ -36,21 +37,21 @@ function timer(ms) {
  }
 
 async function fill(data, data1,xx ){
-  var login_response;
-  chrome.storage.local.get(['login_response'],function(resultt){
-   login_response = resultt.login_response;
-  });
-
   for(var yy=0;yy<data.length;yy++){
     if(data[yy]['area-label'].includes(data1[xx]) || data[yy]['dname'].includes(data1[xx]) || data[yy]['name'].includes(data1[xx]) ){
       // console.log(data1[i])
        if(flag[yy]==0){ 
          flag[yy] = 1;
          console.log(data[yy]['dname'].includes(data1[xx]));
-         await timer(1000);
-         console.log(login_response);
-         var dta = JSON.parse(login_response)[xx][data1[xx]];
-         chrome.storage.local.set({d1 : data[yy]['id']},function(){
+         await timer(2000);
+         var dta;
+      
+         chrome.storage.local.get(['login_response'],function(resultt){
+        dta = JSON.parse(resultt.login_response)[xx][data1[xx]];
+        console.log(resultt.login_response);
+        console.log(resultt.login_response[xx][data1[xx]]);
+        console.log(dta);
+         chrome.storage.local.set({d1 : data[yy]['name']},function(){
            chrome.storage.local.set({d2: dta},function(){
              chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                chrome.storage.local.get(['d1'],function(result1){
@@ -59,19 +60,20 @@ async function fill(data, data1,xx ){
                    console.log(xx + " " + result2.d2);
                    chrome.tabs.executeScript(
                        tabs[0].id,
-                       {code: "document.getElementById('"+result1.d1+"').value = '"+result2.d2+"';"});
-               });
-             });    
+                       {code: "document.getElementsByName('"+result1.d1+"')[0].value = '"+result2.d2+"';"});
+               
            });
          });
        });
-                  // document.getElementById(data[j]['id']).value = login_response[data1[i]];
+      });  
+    
+    });  
+  });
          break;
        }
-     }
-     await timer(2000);
-     console.log("time");
-
+       
+    }
+     await timer(1500);
     }
 }
 document.addEventListener('DOMContentLoaded', documentEvents  , false);
@@ -85,6 +87,10 @@ var login_response;
 function myAction(email, pass) { 
   email = email.value;
   password = pass.value;
+  chrome.storage.local.set({login_email : email},function(){
+  });
+  chrome.storage.local.set({login_password : password},function(){
+  });
   httpGetAsync(("https://afss.herokuapp.com/login?email=" + email +"&password=" + password), function(response) {
     chrome.storage.local.set({login_response : response},function(){
     });
@@ -120,10 +126,8 @@ function documentEvents() {
   // you can add listeners for other objects ( like other buttons ) here 
 }
 
-var url;
-var data,data1;
-var count=0;
-function documentEvents1() {    
+function documentEvents1() {   
+   
   document.getElementById('autofill_btn').addEventListener('click', 
     function() { 
       chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
@@ -132,25 +136,23 @@ function documentEvents1() {
     console.log(url);
     httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
   var ans=response;
-  
+  flag=[];
   if(ans){
     data = JSON.parse(ans)[0];
     data1 = JSON.parse(ans)[1];
-    count=0;
-    for(var i in data){
-      if(data.hasOwnProperty(i))
-      count++;
-    }
+    count = data1.length;
     console.log("count " + count);
-    
-    console.log(data1)
-    for(var i =0;i<count;i++){
+    console.log(data)
+    console.log(data1.length)
+    for(var i =0;i<data1.length;i++){
       flag.push(0);
+    }
+    for(var j=0;j<data.length;j++){
       updateflag.push(0);
     }
     console.log(flag);
     var i,j;
-    for (var xx=0;xx<count;xx++){
+    for (var xx=0;xx<=data1.length;xx++){
       fill(data,data1,xx);
         }
         
@@ -185,46 +187,109 @@ function documentEvents2() {
   // you can add listeners for other objects ( like other buttons ) here 
 }
 
-async function autoupdate_detail(count,i) {
-  var fla=0;
-  for(var j=0;j<count;j++){
-    await timer(500);
-    if((!data[i]['area-label'].includes(data1[j]) || !data[i]['dname'].includes(data1[j]) || !data[i]['name'].includes(data1[j])) && updateflag[i]==0 ){
-      fla=1;
-      updateflag[i]=1;
-      break;
-    }
-  }
-    if(flag){
-      await timer(1000);
-      chrome.storage.local.set({curr : data[i]['id']},function(){
+var ii = 0;                     
+var timeoutt;
+function myLoop (x) {           
+   timeoutt = setTimeout(function () {  
+    if(updateflag[ii] == 0){
+      chrome.storage.local.set({curr : data[ii]['name']},  function(){
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
           chrome.storage.local.get(['curr'],function(result1){
-              console.log(i + " " + result1.curr);
+              console.log(ii + " " + result1.curr);
               chrome.tabs.executeScript(
                   tabs[0].id,
-                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=' + document.getElementById('"+result1.curr+"') + '&value=' + document.getElementById('"+result1.curr+"').value, false); xmlHttp.send(null);"});
-                
+                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=' + document.getElementsByName('"+result1.curr+"')[0].name.replace(/[^a-zA-Z ]/g, '') + '&value=' + document.getElementsByName('"+result1.curr+"')[0].value, false); xmlHttp.send(null);"});
         });    
       });
     
   });
-        await timer(2000);
+  updateflag[ii]=1;
+    }
+flag.push(1);
+      ii++;                     
+      if (ii < x) {            
+         myLoop(x);              
+      }       
+      else{
+        clearTimeout(timeoutt);
+      }                 
+   }, 2000)
 }
-else return;
-
-}
-
 
 function documentEvents3() {    
   document.getElementById('autoupdate_btn').addEventListener('click', 
     function() { 
+      chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+        url = tabs[0].url;
+    });
+    console.log(url);
+    httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
+  var ans=response;
+  flag=[];
+    data = JSON.parse(ans)[0];
+    data1 = JSON.parse(ans)[1];
+    count = data1.length;
+    console.log("count " + count);
+    console.log(data)
+    console.log(data1.length)
+    for(var i =0;i<data1.length;i++){
+      flag.push(0);
+    }
+    for(var j=0;j<data.length;j++){
+      updateflag.push(0);
+    }
+    console.log(flag);
+    });
       console.log("autoupdate");
       console.log(data);
       console.log(data1);
-      for(var i=0;i<data.length;i++){
-        autoupdate_detail(count,i);
+       //myLoop(data1.length);
+       for(var ii=0;ii<data1.length;ii++){
+       for(var j=0;j<data.length;j++){
+        if(data[j]['dname'].includes(data1[ii].replace(/[^a-zA-Z ]/g, "")) && updateflag[j]==0 ){
+          fla=1;
+          updateflag[j]=1;
+          break;  
+        }
       }
-      console.log(update_data);
+    }
+      console.log(updateflag); 
+      myLoop(data.length);
+
+      chrome.storage.local.get(['login_email'],function(result111){
+        chrome.storage.local.get(['login_password'],function(result112){
+      httpGetAsync(("https://afss.herokuapp.com/login?email=" + result111.login_email +"&password=" + result112.login_password), function(response) {
+        chrome.storage.local.set({login_response : response},function(){
+        });
+      });
+    });
+      });
+      console.log("not request");
+    
+      httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
+        var ans=response;
+        if(ans){
+          data = JSON.parse(ans)[0];
+          data1 = JSON.parse(ans)[1];
+        }
+        });
+        console.log(data1);
+
+        var website_url = url_convert(url);
+        console.log(website_url);
+        chrome.storage.local.set({website_url : website_url},  function(){
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.storage.local.get(['website_url'],function(website){
+
+              chrome.tabs.executeScript(
+                  tabs[0].id,
+                  {code: "var xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', 'https://afss.herokuapp.com/autoupdate?id=email_' +'"+ website.website_url+"'  + '&value=' + document.getElementsByName('email')[0].value, false); xmlHttp.send(null);"});
+          
+      });
+    });
+    });
   });
+  console.log("out ");
+
+ 
 }
