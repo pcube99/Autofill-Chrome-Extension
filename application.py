@@ -46,6 +46,28 @@ def login():
                 flash(message)
     return render_template('login.html')
 
+@app.route('/login_website', methods=['GET','POST'])
+def login_website():
+    if request.method == 'POST': 
+        users = mongo.db.users
+        login_use = users.find_one({'email' : request.form['email']})
+        if login_use:
+            if (request.form['pwd'] == login_use['password']):
+                session['email'] = request.form['email']
+                session['name'] = login_use['firstname']
+                session['times'] = login_use['times']
+                login_user = []
+                for i in login_use:
+                    if(i in "_id"):
+                        continue
+                    login_user.append({str(i) : login_use[str(i)]})
+                print(login_user)
+                return render_template('index.html')
+            else :
+                message = Markup("<strong> Not a valid Email or Password </strong>")
+                flash(message)
+    return render_template('login.html')
+
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
@@ -130,10 +152,6 @@ def logout():
 @app.route('/help')
 def help():
     return render_template('help.html')
-@app.route('/after_login')
-def after_login():
-	return render_template('after_login.html')
-
 app.secret_key = 'mysecret'
 
 if __name__ == '__main__':  

@@ -20,14 +20,13 @@
           <ul class="nav navbar-nav navbar-right">
               {% if session.email %}
             <li><a href="/"><span class="glyphicon glyphicon-home black_text"></span> <strong class="black_text">Home</strong></a></li>
-            <li><a href="autofill"><span class="glyphicon glyphicon-ok black_text"></span> <strong class="black_text">Autofill</strong></a></li>
             <li><a href="{{ url_for('details') }}"><span class="glyphicon glyphicon-cog black_text"></span> <strong class="black_text">Details</strong></a></li>
             <li><a href="help"><span class="glyphicon glyphicon-question-sign black_text"></span> <strong class="black_text">Help</strong></a></li>
             <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-in black_text"></span> <strong class="black_text">Log out</strong></a></li>
 
             {% else %}
             <li><a href="signup"><span class="glyphicon glyphicon-user black_text"></span> <strong class="black_text">Sign Up</strong></a></li>
-            <li><a href="login"><span class="glyphicon glyphicon-log-in black_text"></span> <strong class="black_text">Log in</strong></a></li>
+            <li><a href="login_website"><span class="glyphicon glyphicon-log-in black_text"></span> <strong class="black_text">Log in</strong></a></li>
             <li><a href="help"><span class="glyphicon glyphicon-question-sign black_text"></span> <strong class="black_text">Help</strong></a></li>
 
             {% endif %}

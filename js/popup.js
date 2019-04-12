@@ -82,7 +82,11 @@ async function fill(data, data1,xx ){
        
     }
      await timer(1500);
+     if(yy == xx-1)
+     await password_manager();
     }
+
+  
 }
 document.addEventListener('DOMContentLoaded', documentEvents  , false);
 document.addEventListener('DOMContentLoaded', documentEvents1  , false);
@@ -134,6 +138,59 @@ function documentEvents() {
   // you can add listeners for other objects ( like other buttons ) here 
 }
 
+async function password_manager(){
+  //add here
+  var fill_website_email = 'email' + url_convert(url);
+  var fill_website_password = 'password' + url_convert(url);
+
+  
+  for(var i=0;i<data1.length;i++){
+    if(fill_website_email==data1[i]){
+      var temp =i;
+      boolemail=true;
+      console.log("i is" + i);
+      console.log(data1);
+      chrome.storage.local.get(['login_response'],function(resultt){
+        console.log(JSON.parse(resultt.login_response));
+        console.log("i isss "+i);
+        console.log(JSON.parse(resultt.login_response)[temp]);
+      chrome.storage.local.set({data_website_email : JSON.parse(resultt.login_response)[temp][data1[temp]]},  function(){
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.storage.local.get(['data_website_email'],function(new_fill_website_email){
+              chrome.tabs.executeScript(
+                  tabs[0].id,
+                  {code: "document.getElementsByName('email')[0].value = '"+new_fill_website_email.data_website_email+"';"});
+          
+      });
+    });
+    });
+  });
+    }
+    
+    if(fill_website_password == data1[i]){
+    var temp1 =i;
+    boolpassword=true;
+      console.log("i is" + i);
+      console.log(data1);
+      chrome.storage.local.get(['login_response'],function(resultt){
+        console.log(JSON.parse(resultt.login_response));
+        console.log("i isss "+i);
+        console.log(JSON.parse(resultt.login_response)[temp1]);
+      chrome.storage.local.set({data_website_password : JSON.parse(resultt.login_response)[temp1][data1[temp1]]},  function(){
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.storage.local.get(['data_website_password'],function(new_fill_website_password){
+              chrome.tabs.executeScript(
+                  tabs[0].id,
+                  {code: "document.getElementsByName('password')[0].value = '"+new_fill_website_password.data_website_password+"';"});
+          
+      });
+    });
+    });
+  });
+    }
+    
+  }
+}
 function documentEvents1() {   
    
   document.getElementById('autofill_btn').addEventListener('click', 
@@ -167,57 +224,7 @@ function documentEvents1() {
       }
     });
 
-    //add here
-    var fill_website_email = 'email' + url_convert(url);
-    var fill_website_password = 'password' + url_convert(url);
-
     
-    for(var i=0;i<data1.length;i++){
-      if(fill_website_email==data1[i]){
-        var temp =i;
-        boolemail=true;
-        console.log("i is" + i);
-        console.log(data1);
-        chrome.storage.local.get(['login_response'],function(resultt){
-          console.log(JSON.parse(resultt.login_response));
-          console.log("i isss "+i);
-          console.log(JSON.parse(resultt.login_response)[temp]);
-        chrome.storage.local.set({data_website_email : JSON.parse(resultt.login_response)[temp][data1[temp]]},  function(){
-          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.storage.local.get(['data_website_email'],function(new_fill_website_email){
-                chrome.tabs.executeScript(
-                    tabs[0].id,
-                    {code: "document.getElementsByName('email')[0].value = '"+new_fill_website_email.data_website_email+"';"});
-            
-        });
-      });
-      });
-    });
-      }
-      
-      if(fill_website_password == data1[i]){
-      var temp1 =i;
-      boolpassword=true;
-        console.log("i is" + i);
-        console.log(data1);
-        chrome.storage.local.get(['login_response'],function(resultt){
-          console.log(JSON.parse(resultt.login_response));
-          console.log("i isss "+i);
-          console.log(JSON.parse(resultt.login_response)[temp1]);
-        chrome.storage.local.set({data_website_password : JSON.parse(resultt.login_response)[temp1][data1[temp1]]},  function(){
-          chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.storage.local.get(['data_website_password'],function(new_fill_website_password){
-                chrome.tabs.executeScript(
-                    tabs[0].id,
-                    {code: "document.getElementsByName('password')[0].value = '"+new_fill_website_password.data_website_password+"';"});
-            
-        });
-      });
-      });
-    });
-      }
-      
-    }
 
   // you can add listeners for other objects ( like other buttons ) here 
 });
