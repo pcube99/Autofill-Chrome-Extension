@@ -7,7 +7,7 @@ import sys
 from functools import wraps
 import time
 from flask import jsonify
-
+import simplejson as json
 import rncryptor
 passw = '123'
 #print (os.environ)
@@ -30,7 +30,8 @@ def login():
         login_use = users.find_one({'email' : email})
        # print(login_user)
         if login_use:
-            pss = rncryptor.decrypt(login_use['password'], passw)
+            x = login_use['password']
+            pss = rncryptor.decrypt(json.dumps(x.decode("utf-8")), passw)
             if (password == pss):
                 print("HIIII")
                 session['email'] = email
