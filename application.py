@@ -64,9 +64,9 @@ def login_website():
                     login_user.append({str(i) : login_use[str(i)]})
                 print(login_user)
                 return render_template('index.html')
-        else :
-            message = Markup("<strong> Not a valid Email or Password </strong>")
-            flash(message)
+    else :
+        message = Markup("<strong> Not a valid Email or Password </strong>")
+        flash(message)
     return render_template('login.html')
 
 @app.route('/signup', methods=['POST', 'GET'])

@@ -8,7 +8,6 @@ from flask_pymongo import PyMongo
 import requests
 import os
 import password
-passw = '123'
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = "autofill"
 app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongodb.net:27017,cluster0-shard-00-01-tqm1v.mongodb.net:27017,cluster0-shard-00-02-tqm1v.mongodb.net:27017/autofill?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
@@ -76,7 +75,8 @@ def func(link):
         if(i == "_id" or i == " id" or i ==  "id"):
             continue
         if "password" in i:
-            data_values[atts[counter]] = rncryptor.decrypt(existing_user[str(i)], passw)  
+            x = existing_user[str(i)]
+            data_values[atts[counter]] = password.decrypt(x[0],x[1])  
         else:
             data_values[atts[counter]] = existing_user[str(i)]
 
@@ -87,6 +87,8 @@ def func(link):
     print(html_data)
     print(atts)
     return reponse
+
+    
 def autoupdate_texti(idd, value):
     users = mongo.db.users
     existing_user = users.find_one({'email' : session['email']})  
