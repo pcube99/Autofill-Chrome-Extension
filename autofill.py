@@ -7,7 +7,7 @@ from flask import Flask, render_template, url_for, request, session, redirect
 from flask_pymongo import PyMongo
 import requests
 import os
-import rncryptor
+import password
 passw = '123'
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = "autofill"

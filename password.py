@@ -1,18 +1,11 @@
+from cryptography.fernet import Fernet
+key = Fernet.generate_key() #this is your "password"
+cipher_suite = Fernet(key)
+def encrypt(password):
+    encoded_text = cipher_suite.encrypt(bytes(password, "utf-8"))
+    return str(encoded_text).split("'")[1]
 
-import rncryptor
-data = '123'
-password = '123'
-
-# rncryptor.RNCryptor's methods
-# cryptor = rncryptor.RNCryptor()
-# encrypted_data = cryptor.encrypt(data, password)
-# decrypted_data = cryptor.decrypt(encrypted_data, password)
-# assert data == decrypted_data
-# print(encrypted_data)
-# print(decrypted_data)
-# # rncryptor's functions
-encrypted_data = rncryptor.encrypt(data, password)
-decrypted_data = rncryptor.decrypt(encrypted_data, password)
-assert data == decrypted_data
-print(encrypted_data)
-print(decrypted_data)
+def decrypt(password):
+    password = bytes(password, "utf-8")
+    decoded_text = cipher_suite.decrypt(password)
+    return (str(decoded_text).split("'")[1])
