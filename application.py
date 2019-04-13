@@ -31,6 +31,7 @@ def login():
        # print(login_user)
         if login_use:
             if (password == rncryptor.decrypt(login_use['password'], passw)):
+                print("HIIII")
                 session['email'] = email
                 session['name'] = login_use['firstname']
                 session['times'] = login_use['times']
