@@ -42,32 +42,43 @@
       <div class="container1" id="grad1">
         
         <h2 align="center" class="paddin">Signup form</h2>
+        {% with messages = get_flashed_messages() %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-danger alert-dismissible fade in" style="width: auto; display: inline-block; 
+  margin-left: 20%;">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      {{message}}
+    </div> 
+  {% endfor %}
+{% endif %}
+{% endwith %}
         <form class="form-horizontal" method=POST action="{{ url_for('signup') }}">
         <div class="form-group row col-sm-10 ">
             <label class="col-sm-4 col-form-label" for="email">First Name:</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="first_name" placeholder="Enter First Name" name="first_name">
+                <input required type="text" class="form-control" id="first_name" placeholder="Enter First Name" name="first_name">
             </div>
             </div>
 
             <div class="form-group row col-sm-10" >
             <label class="col-sm-4 col-form-label" for="email">Last Name:</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="last_name" placeholder="Enter Last Name" name="last_name">
+                <input required type="text" class="form-control" id="last_name" placeholder="Enter Last Name" name="last_name">
             </div>
             </div>
             
             <div class="form-group row col-sm-10" >
               <label class="col-sm-4 col-form-label" for="email">User Name:</label>
               <div class="col-sm-10">
-                  <input type="text" class="form-control" id="username" placeholder="Enter User Name" name="username">
+                  <input required type="text" class="form-control" id="username" placeholder="Enter User Name" name="username">
               </div>
               </div>
 
           <div class="form-group row col-sm-10" >
             <label class="col-sm-4 col-form-label" for="email">Email:</label>
             <div class="col-sm-10">
-              <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" name="email">
+              <input required type="email" class="form-control" id="email" name="email" placeholder="Enter email" name="email">
             </div>
           </div>
             
@@ -75,51 +86,14 @@
           <div class="form-group row col-sm-10" >
             <label class="col-sm-4 col-form-label" for="pwd">Password:</label>
             <div class="col-sm-10">          
-              <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+              <input required type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
             </div>
           </div>
-            
-
-          <div class="form-group row col-sm-10" >
-                <label class="col-sm-4 col-form-label" for="pwd">Confirm Password:</label>
-                <div class="col-sm-10">          
-                  <input type="password" class="form-control" id="pwd" placeholder="Enter confirm password" name="confirm_pwd">
-                </div>
-         </div>
-            
-
-        <div class="form-group row col-sm-10" > <!-- Radio group !-->
-            <label class="col-sm-4 col-form-label">Gender</label>
-            <div class="radio col-sm-10" >
-                <label>
-                <input type="radio" name="l" value="male" >
-                Male
-            </label>
-            </div>
-            <div class="radio col-sm-10" >
-                <label>
-                <input type="radio"  name="l" value="female">
-                Female
-                </label>
-            </div>
-            <div class="radio col-sm-10" >
-                    <label>
-                        <input type="radio"  name="l" value="other">
-                        Other
-                    </label>
-                    </div>
-            </div>    
-            <div class="form-group row col-sm-10">
-                <label for="example-date-input" class="col-sm-4 col-form-label">Date of Birth</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="date" name="dob" value="2011-08-19" id="example-date-input">
-                </div>
-              </div>
 
             <div class="form-group row col-sm-10" > <!-- Street 1 -->
                 <label for="street1_id" class="col-sm-4 col-form-label">Street Address 1</label>
                 <div class="col-sm-10">          
-                <input type="text" class="form-control" name="address1" id="street1_id" placeholder="Street address, P.O. box, company name, c/o">
+                <input required type="text" class="form-control" name="address1" id="street1_id" placeholder="Street address, P.O. box, company name, c/o">
                 </div>
             </div>					
             
@@ -127,35 +101,35 @@
             <div class="form-group row col-sm-10" > <!-- Street 2 -->
                 <label for="street2_id" class="col-sm-4 col-form-label">Street Address 2</label>
                 <div class="col-sm-10">          
-                <input type="text" class="form-control" name="address2" id="street2_id" placeholder="Apartment, suite, unit, building, floor, etc.">
+                <input required type="text" class="form-control" name="address2" id="street2_id" placeholder="Apartment, suite, unit, building, floor, etc.">
                 </div>
             </div>	
             
             <div class="form-group row col-sm-10" > <!-- Zip Code-->
                 <label for="zip_id" class="col-sm-4 col-form-label">Zip Code</label>               
                 <div class="col-sm-10">          
-                <input type="text" class="form-control" name="zipcode" id="zip_id" placeholder="#####">
+                <input required type="text" class="form-control" name="zipcode" id="zip_id" placeholder="#####">
                 </div>
             </div>
                 
             <div class="form-group row col-sm-10" > <!-- Zip Code-->
               <label for="zip_id" class="col-sm-4 col-form-label">Phone No.</label>               
               <div class="col-sm-10">          
-              <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="123 123 4568">
+              <input required type="text" class="form-control" name="phone_no" id="phone_no" placeholder="123 123 4568">
               </div>
           </div>
             
             <div class="form-group row col-sm-10" > <!-- City-->
                 <label for="city_id" class="col-sm-4 col-form-label">City</label>
                 <div class="col-sm-10">          
-                <input type="text" class="form-control" name="city" id="city_id" placeholder="Smallville">
+                <input required type="text" class="form-control" name="city" id="city_id" placeholder="Smallville">
                 </div>
             </div>	 
             
             <div class="form-group row col-sm-10" > <!-- City-->
               <label for="city_id" class="col-sm-4 col-form-label">State</label>
               <div class="col-sm-10">          
-              <input type="text" class="form-control" name="state" id="state_id" placeholder="Gujarat">
+              <input required type="text" class="form-control" name="state" id="state_id" placeholder="Gujarat">
               </div>
           </div>	 
           <div class="form-group row col-sm-10" >        

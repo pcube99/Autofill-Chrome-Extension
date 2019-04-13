@@ -86,9 +86,11 @@ def signup():
             session['email'] = request.form['email']
             session['name'] = request.form['first_name']
             session['times'] = '1'
-            return render_template("login.html")
-        
-        return 'That Account already exists!'
+            return redirect(url_for('login_website'))
+        else:
+            message = Markup("<strong>That Account already exists!</strong>")
+            flash(message)
+        return render_template('signup.html')
 
     return render_template('signup.html')
 
