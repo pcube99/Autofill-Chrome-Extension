@@ -51,7 +51,7 @@ async function fill(data, data1,xx ){
        if(flag[yy]==0){ 
          flag[yy] = 1;
          console.log(data[yy]['dname'].includes(data1[xx]));
-         await timer(2000);
+         await timer(500);
          var dta;
       
          chrome.storage.local.get(['login_response'],function(resultt){
