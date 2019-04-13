@@ -20,15 +20,16 @@ def index():
 @app.route('/login', methods=['GET','POST'])
 def login():
     email = request.args.get('email', None)
-    password = request.args.get('password', None)
+    passwor = request.args.get('password', None)
     if request.method == 'POST' or request.method == 'GET': 
         users = mongo.db.users
         login_use = users.find_one({'email' : email})
        # print(login_user)
         if login_use:
             x = login_use['password']
-            pss = password.decrypt(x)
-            if (password == pss):
+            pss = password.decrypt(x[0],x[1])
+            print(pss)
+            if (passwor == pss):
                 print("HIIII")
                 session['email'] = email
                 session['name'] = login_use['firstname']
@@ -51,7 +52,8 @@ def login_website():
         users = mongo.db.users
         login_use = users.find_one({'email' : request.form['email']})
         if login_use:
-            if (request.form['pwd'] == password.decrypt(login_use['password'])):
+            x = login_use['password']
+            if (request.form['pwd'] == password.decrypt(x[0],x[1])):
                 session['email'] = request.form['email']
                 session['name'] = login_use['firstname']
                 session['times'] = login_use['times']
