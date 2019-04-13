@@ -195,16 +195,12 @@ function documentEvents1() {
    
   document.getElementById('autofill_btn').addEventListener('click', 
     function() { 
-      for(var i=0;i<100;i++)
-      {
+      
+
         chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
           url = tabs[0].url;
       });
-      if(typeof url !== 'undefined'){ 
-        console.log("URL detected");
-        break;
-    }
-  }
+     
     console.log(url);
     httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
   var ans=response;
@@ -235,6 +231,10 @@ function documentEvents1() {
 
   // you can add listeners for other objects ( like other buttons ) here 
 });
+  if(typeof url === "undefined")
+  {
+    document.getElementById("autofill_btn").click();
+  }
 }
 
 function documentEvents2() {    
@@ -378,6 +378,9 @@ function documentEvents3() {
   });
   });
   console.log("out ");
-
+  if(typeof url === "undefined")
+  {
+    document.getElementById("autoupdate_btn").click();
+  }
  
 }
