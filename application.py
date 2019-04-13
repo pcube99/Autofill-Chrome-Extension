@@ -30,7 +30,8 @@ def login():
         login_use = users.find_one({'email' : email})
        # print(login_user)
         if login_use:
-            if (password == rncryptor.decrypt(login_use['password'], passw)):
+            pss = rncryptor.decrypt(login_use['password'], passw)
+            if (password == pss):
                 print("HIIII")
                 session['email'] = email
                 session['name'] = login_use['firstname']
