@@ -88,9 +88,12 @@ def func(link):
     print(atts)
     return reponse
 
-    
+
 def autoupdate_texti(idd, value):
     users = mongo.db.users
-    existing_user = users.find_one({'email' : session['email']})  
-    users.update({"email": existing_user["email"]}, {"$set": {idd : value}})
+    existing_user = users.find_one({'email' : session['email']})
+    if "password" in idd:
+        users.update({"email": existing_user["email"]}, {"$set": {idd : password.encrypt(value)}})
+    else:
+        users.update({"email": existing_user["email"]}, {"$set": {idd : value}})
     return 'OK'
