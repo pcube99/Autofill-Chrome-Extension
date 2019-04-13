@@ -76,6 +76,7 @@ def func(link):
             continue
         if "password" in i:
             x = existing_user[str(i)]
+            print(password.decrypt(x[0],x[1]))
             data_values[atts[counter]] = password.decrypt(x[0],x[1])  
         else:
             data_values[atts[counter]] = existing_user[str(i)]

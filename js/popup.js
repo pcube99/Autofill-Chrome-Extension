@@ -54,7 +54,7 @@ async function fill(data, data1,xx ){
          await timer(500);
          var dta;
       
-         chrome.storage.local.get(['login_response'],function(resultt){
+        chrome.storage.local.get(['login_response'],function(resultt){
         dta = JSON.parse(resultt.login_response)[xx][data1[xx]];
         console.log(resultt.login_response);
         console.log(resultt.login_response[xx][data1[xx]]);
