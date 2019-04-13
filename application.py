@@ -80,7 +80,7 @@ def signup():
             users.insert({'firstname' : request.form['first_name'],'lastname' : request.form['last_name'] ,'email' : request.form['email'], 'password' : hashpass,
             'address1' : request.form['address1'],'address2' : request.form['address2'],
             'zipcode' : request.form['zipcode'],'city' : request.form['city'],
-            'state' : request.form['state'],'phoneno' : request.form['phone_no'],'username' : request.form['username'],
+            'state' : request.form['state'],'phoneno' : request.form['phone_no'],
             'times' : '1'
             })
             session['email'] = request.form['email']

@@ -195,9 +195,11 @@ function documentEvents1() {
    
   document.getElementById('autofill_btn').addEventListener('click', 
     function() { 
+      while(typeof url === 'undefined'){
       chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
         url = tabs[0].url;
     });
+  }
     console.log(url);
     httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
   var ans=response;
