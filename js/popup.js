@@ -195,10 +195,15 @@ function documentEvents1() {
    
   document.getElementById('autofill_btn').addEventListener('click', 
     function() { 
-      while(typeof url === 'undefined'){
-      chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-        url = tabs[0].url;
-    });
+      for(var i=0;i<100;i++)
+      {
+        chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+          url = tabs[0].url;
+      });
+      if(typeof url !== 'undefined'){ 
+        console.log("URL detected");
+        break;
+    }
   }
     console.log(url);
     httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
