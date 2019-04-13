@@ -82,6 +82,7 @@ def func(link):
             data_values[atts[counter]] = existing_user[str(i)]
 
         counter+=1
+    print(data_values)
     reponse = []
     reponse.append(html_data)
     reponse.append(atts)

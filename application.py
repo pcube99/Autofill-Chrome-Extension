@@ -38,7 +38,11 @@ def login():
                 for i in login_use:
                     if(i in "_id"):
                         continue
-                    login_user.append({str(i) : login_use[str(i)]})
+                    if "password" in i:
+                        xx = login_use[str(i)]
+                        login_user.append({str(i) : password.decrypt(xx[0],xx[1])})
+                    else:
+                        login_user.append({str(i) : login_use[str(i)]})
                 print(login_user)
                 return jsonify(login_user)
             else :
