@@ -8,6 +8,8 @@ from functools import wraps
 import time
 from flask import jsonify
 
+import rncryptor
+passw = '123'
 #print (os.environ)
 #from passlib.hash import sha256_crypt
 app = Flask(__name__)
@@ -15,8 +17,6 @@ app.config["MONGO_DBNAME"] = "autofill"
 app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongodb.net:27017,cluster0-shard-00-01-tqm1v.mongodb.net:27017,cluster0-shard-00-02-tqm1v.mongodb.net:27017/autofill?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 mongo = PyMongo(app)
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -30,7 +30,7 @@ def login():
         login_use = users.find_one({'email' : email})
        # print(login_user)
         if login_use:
-            if (password == login_use['password']):
+            if (password == rncryptor.decrypt(login_use['password'], passw)):
                 session['email'] = email
                 session['name'] = login_use['firstname']
                 session['times'] = login_use['times']
@@ -52,7 +52,7 @@ def login_website():
         users = mongo.db.users
         login_use = users.find_one({'email' : request.form['email']})
         if login_use:
-            if (request.form['pwd'] == login_use['password']):
+            if (request.form['pwd'] == rncryptor.decrypt(login_use['password'], passw)):
                 session['email'] = request.form['email']
                 session['name'] = login_use['firstname']
                 session['times'] = login_use['times']
@@ -75,7 +75,7 @@ def signup():
         existing_user = users.find_one({'email' : request.form['email']})
 
         if existing_user is None:
-            hashpass=(request.form['pwd'])
+            hashpass=rncryptor.encrypt(request.form['pwd'], passw)
             #print(sha256_crypt.verify("password", password))
             users.insert({'firstname' : request.form['first_name'],'lastname' : request.form['last_name'] ,'email' : request.form['email'], 'password' : hashpass,
             'address1' : request.form['address1'],'address2' : request.form['address2'],
@@ -115,7 +115,8 @@ def autofill_text():
 def autoupdate_text():
     idd = request.args.get('id', None)
     val = request.args.get('value', None)
-
+    if "password" in idd:
+        idd = rncryptor.encrypt(idd, passw)
     if(request.method == 'POST'):
         message = Markup("<strong> Autoupdate is successful , go to details to watch new details.</strong>")
         flash(message)

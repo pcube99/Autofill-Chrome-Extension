@@ -7,6 +7,8 @@ from flask import Flask, render_template, url_for, request, session, redirect
 from flask_pymongo import PyMongo
 import requests
 import os
+import rncryptor
+passw = '123'
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = "autofill"
 app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongodb.net:27017,cluster0-shard-00-01-tqm1v.mongodb.net:27017,cluster0-shard-00-02-tqm1v.mongodb.net:27017/autofill?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
@@ -73,7 +75,11 @@ def func(link):
         #print(i)
         if(i == "_id" or i == " id" or i ==  "id"):
             continue
-        data_values[atts[counter]] = existing_user[str(i)]
+        if "password" in i:
+            data_values[atts[counter]] = rncryptor.decrypt(existing_user[str(i)], passw)  
+        else:
+            data_values[atts[counter]] = existing_user[str(i)]
+
         counter+=1
     reponse = []
     reponse.append(html_data)
