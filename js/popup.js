@@ -6,7 +6,7 @@ var data,data1;
 var count=0;
 var boolemail =false;
 var boolpassword = false;
-
+var istransactioncomplete=true;
 setTimeout(function(){
   chrome.storage.local.get(['islogin'], function(result) {
 
@@ -297,6 +297,7 @@ flag.push(1);
          myLoop(x);              
       }       
       else{
+        istransactioncomplete=true;
         clearTimeout(timeoutt);
       }                 
    }, 2000)
@@ -305,6 +306,7 @@ flag.push(1);
 function documentEvents3() {    
   document.getElementById('autoupdate_btn').addEventListener('click', 
     function() { 
+      istransactioncomplete =false;
       chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
         url = tabs[0].url;
     });
@@ -341,7 +343,10 @@ function documentEvents3() {
     }
       console.log(updateflag); 
       myLoop(data.length);
-
+    
+      for(var i=0;i<10000000;i++)
+      if(istransactioncomplete == true){break;}
+      
       chrome.storage.local.get(['login_email'],function(result111){
         chrome.storage.local.get(['login_password'],function(result112){
       httpGetAsync(("https://afss.herokuapp.com/login?email=" + result111.login_email +"&password=" + result112.login_password), function(response) {

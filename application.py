@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from flask import Flask, render_template, url_for, request, session, redirect,Markup, flash
 from flask_pymongo import PyMongo
 import autofill
@@ -8,11 +11,14 @@ from functools import wraps
 import time
 from flask import jsonify
 import password
+from random import randint
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = "autofill"
 app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongodb.net:27017,cluster0-shard-00-01-tqm1v.mongodb.net:27017,cluster0-shard-00-02-tqm1v.mongodb.net:27017/autofill?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
 mongo = PyMongo(app)
+msg = MIMEMultipart()
+otp = 0
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -68,10 +74,31 @@ def login_website():
                     login_user.append({str(i) : login_use[str(i)]})
                 print(login_user)
                 return render_template('index.html')
-    else :
-        message = Markup("<strong> Not a valid Email or Password </strong>")
-        flash(message)
+            else:
+                message = Markup("<strong>Wrong Password !</strong>")
+                flash(message)
+        else:
+            message = Markup("<strong>Not a valid user , Please signup.</strong>")
+            flash(message)
     return render_template('login.html')
+def email_verification(receiver):
+    global otp
+    otp = randint(1000, 9999)
+    print("otp " + str(otp))
+    msg['From'] = 'thecubeofp@gmail.com'
+    msg['To'] = receiver
+    msg['Subject'] = 'Autofill : Verify your email'
+    message = 'Autofill account \n\nVerify your email address\n\nTo finish setting up your Autofill account, we just need to make sure this email address is yours.\n\nTo verify your email address use this security code: ' + str(otp)+'\n\nIf you did not request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.\n\nThanks,\nThe Autofill Team'
+    msg.attach(MIMEText(message))
+
+    mailserver = smtplib.SMTP('smtp.gmail.com',587)
+    mailserver.ehlo()
+    mailserver.starttls()
+    mailserver.ehlo()
+    mailserver.login('thecubeofp@gmail.com', 'iamp.cube')
+    mailserver.sendmail('thecubeofp@gmail.com',receiver,msg.as_string())
+    mailserver.quit()
+    return otp
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -80,18 +107,20 @@ def signup():
         existing_user = users.find_one({'email' : request.form['email']})
 
         if existing_user is None:
+            session['email'] = request.form['email']
+            email_verification(request.form['email'])
             hashpass=password.encrypt(request.form['pwd'])
             #print(sha256_crypt.verify("password", password))
             users.insert({'firstname' : request.form['first_name'],'lastname' : request.form['last_name'] ,'email' : request.form['email'], 'password' : hashpass,
             'address1' : request.form['address1'],'address2' : request.form['address2'],
             'zipcode' : request.form['zipcode'],'city' : request.form['city'],
             'state' : request.form['state'],'phoneno' : request.form['phone_no'],
-            'times' : '1'
+            'times' : '1', 'isverified' : "false"
             })
             session['email'] = request.form['email']
             session['name'] = request.form['first_name']
             session['times'] = '1'
-            return "OK"
+            return redirect(url_for('verify'))
         else:
             message = Markup("<strong>That Account already exists!</strong>")
             flash(message)
@@ -160,8 +189,28 @@ def logout():
 @app.route('/help')
 def help():
     return render_template('help.html')
+@app.route('/verify', methods=['POST', 'GET'])
+def verify():
+    if request.method == "POST":
+        print(otp)
+        print(request.form['otp'])
+        if(request.form['otp'] == str(otp)):
+            users = mongo.db.users
+            existing_user = users.find_one({'email' : session['email']})
+            users.update({'email': existing_user['email']}, {'$set' : {'isverified' : "true"}})
+            return render_template('login.html')
+        else:
+            message = Markup("<strong>Wrong OTP , Try again !</strong>")
+            flash(message)
+    return render_template('verification.html')
 
-
+@app.route('/resend', methods=['POST', 'GET'])
+def resend():
+    if request.method == "POST":
+        message = Markup("<strong>We have resent you an OTP on this email, Check your inbox.</strong>")
+        flash(message)
+        email_verification(session['email'])
+    return render_template('verification.html')
 
 app.secret_key = 'mysecret'
 
