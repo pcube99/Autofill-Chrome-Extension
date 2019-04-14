@@ -66,7 +66,7 @@ def func(link):
         #print(i)
         if(i in "_id"):
             continue
-        atts.append(re.sub('[^A-Za-z0-9]+', '', str(i).lower()).replace(" ",""))
+        atts.append(re.sub('[^A-Za-z0-9]+', '', str(i)))
     #print(atts)
     counter=0
     #print(existing_user)

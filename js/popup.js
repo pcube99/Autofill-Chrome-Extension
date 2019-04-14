@@ -6,6 +6,24 @@ var data,data1;
 var count=0;
 var boolemail =false;
 var boolpassword = false;
+
+setTimeout(function(){
+  chrome.storage.local.get(['islogin'], function(result) {
+
+    console.log(result.islogin);
+    if(result.islogin){
+      document.getElementById('container').style.display = "none";
+      document.getElementById('logined').style.display = "block";
+    }
+  else{
+    document.getElementById('container').style.display = "block";
+    document.getElementById('logined').style.display = "none";
+  }
+    
+  });  
+},1500);
+
+
 function url_convert(url){
   var website_url = url.split('//').pop().split('/')[0];
   return website_url.split(".").join("");
@@ -21,17 +39,7 @@ function httpGetAsync(theUrl, callback)
     xmlHttp.open("GET", theUrl, false); // true for asynchronous 
     xmlHttp.send(null);
 }
-chrome.storage.local.get(['islogin'], function(result) {
-  if(result.islogin){
-    document.getElementById('container').style.display = "none";
-    document.getElementById('logined').style.display = "block";
-  }
-else{
-  document.getElementById('container').style.display = "block";
-  document.getElementById('logined').style.display = "none";
-}
-  
-});
+
 
 function timer(ms) {
   return new Promise(res => setTimeout(res, ms));
@@ -45,11 +53,12 @@ async function fill(data, data1,xx ){
     if(data1[xx] == 'password' && boolpassword==true)
     continue;
 
-    if(data[yy]['area-label'].includes(data1[xx]) || data[yy]['dname'].includes(data1[xx]) || data[yy]['name'].includes(data1[xx]) ){
+    if(data[yy]['area-label'].includes(data1[xx].toLowerCase()) || data[yy]['dname'].includes(data1[xx].toLowerCase()) || data[yy]['name'].includes(data1[xx].toLowerCase())){
       // console.log(data1[i])
 
        if(flag[yy]==0){ 
          flag[yy] = 1;
+         console.log(data);
          console.log(data[yy]['dname'].includes(data1[xx]));
          await timer(500);
          var dta;
@@ -57,7 +66,9 @@ async function fill(data, data1,xx ){
         chrome.storage.local.get(['login_response'],function(resultt){
         dta = JSON.parse(resultt.login_response)[xx][data1[xx]];
         console.log(resultt.login_response);
-        console.log(resultt.login_response[xx][data1[xx]]);
+        console.log(xx);
+        console.log(data1[xx]);
+        console.log(resultt.login_response[data1[xx]]);
         console.log(dta);
          chrome.storage.local.set({d1 : data[yy]['name']},function(){
            chrome.storage.local.set({d2: dta},function(){
