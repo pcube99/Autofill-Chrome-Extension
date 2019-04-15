@@ -179,9 +179,6 @@ def autoupdate_text():
     if "password" in idd:
         idd = password.encrypt(val)
     if(request.method == 'POST'):
-        message = Markup("<strong> Autoupdate is successful , go to details to watch new details.</strong>")
-        flash(message)
-        print("gggggg")
         return autofill.autoupdate_texti(idd,val)
     else:
         return autofill.autoupdate_texti(idd,val)
