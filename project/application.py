@@ -141,10 +141,10 @@ def signup():
             email_verification(request.form['email'])
             hashpass=password.encrypt(request.form['pwd'])
             #print(sha256_crypt.verify("password", password))
-            users.insert({'firstname' : request.form['first_name'],'lastname' : request.form['last_name'] ,'email' : request.form['email'], 'password' : hashpass,
+            users.insert({'name' : request.form['first_name'],'lastname' : request.form['last_name'] ,'email' : request.form['email'], 'password' : hashpass,
             'address' : request.form['address1'],'address1' : request.form['address2'],
             'zipcode' : request.form['zipcode'],'city' : request.form['city'],
-            'state' : request.form['state'],'phoneno' : request.form['phone_no'],
+            'state' : request.form['state'],'no' : request.form['phone_no'],
             'times' : '1', 'isverified' : "false"
             })
             session['email'] = request.form['email']
