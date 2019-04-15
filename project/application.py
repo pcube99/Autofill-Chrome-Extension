@@ -22,6 +22,7 @@ app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongo
 mongo = PyMongo(app)
 otp = 0
 otp_array =[]
+change_password_array = []
 change_password = ''
 @app.route('/')
 def index():
@@ -117,6 +118,7 @@ def forget_password(receiver):
     global change_password
     char_set = string.ascii_uppercase + string.digits
     change_password = ''.join(random.sample(char_set*6, 6))
+    change_password_array.append(change_password)
     msg['From'] = 'autofill.sen@gmail.com'
     msg['To'] = receiver
     msg['Subject'] = 'Autofill : Reset your password'
@@ -269,7 +271,8 @@ def forgetpassword():
 @app.route('/changedpassword', methods=['POST', 'GET'])
 def changedpassword():
     if request.method == "POST":
-        if(change_password == request.form['changed_password']):
+        if(str(request.form['changed_password']) in change_password_array):
+            change_password_array.remove(str(request.form['changed_password']))
             passw = password.encrypt(change_password)
             opp = []
             opp.append(passw[0])
