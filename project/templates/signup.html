@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto Fill</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/index.css">
+
+   
+<style>
+        #grad1 {
+      background-color: orange; /* For browsers that do not support gradients */
+      background-image: repeating-linear-gradient(orange);  /* Standard syntax (must be last) */
+    }
+    body{
+      background-image: url("../static/background.jpg");
+
+        }
+
+  </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-light" style="background-color: #f9ccc2 ;">
+        <div class="container-fluid">
+          <div class="navbar-header">
+                  <a class="navbar-brand" href="/"><strong class="black_text">Auto-Fill (Application Bharo)</strong></a>
+              </div>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="/"><span class="glyphicon glyphicon-home black_text"></span> <strong class="black_text">Home</strong></a></li>
+                <li><a href="signup"><span class="glyphicon glyphicon-user black_text"></span> <strong class="black_text">Sign Up</strong></a></li>
+                <li><a href="login_website"><span class="glyphicon glyphicon-log-in black_text"></span> <strong class="black_text">Log in</strong></a></li>
+                <li><a href="help"><span class="glyphicon glyphicon-question-sign black_text"></span> <strong class="black_text">Help</strong></a></li>
+
+              </ul>
+        </div>
+      </nav>
+        
+      <div class="container1" id="grad1">
+        
+        <h2 align="center" class="paddin">Signup form</h2>
+        {% with messages = get_flashed_messages() %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-danger alert-dismissible fade in" style="width: auto; display: inline-block; 
+  margin-left: 20%;">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      {{message}}
+    </div> 
+  {% endfor %}
+{% endif %}
+{% endwith %}
+        <form class="form-horizontal" method=POST action="{{ url_for('signup') }}">
+        <div class="form-group row col-sm-10 ">
+            <label class="col-sm-4 col-form-label" for="email">First Name:</label>
+            <div class="col-sm-10">
+                <input required type="text" class="form-control" id="first_name" placeholder="Enter First Name" name="first_name">
+            </div>
+            </div>
+
+            <div class="form-group row col-sm-10" >
+            <label class="col-sm-4 col-form-label" for="email">Last Name:</label>
+            <div class="col-sm-10">
+                <input required type="text" class="form-control" id="last_name" placeholder="Enter Last Name" name="last_name">
+            </div>
+            </div>
+            
+
+          <div class="form-group row col-sm-10" >
+            <label class="col-sm-4 col-form-label" for="email">Email:</label>
+            <div class="col-sm-10">
+              <input required type="email" class="form-control" id="email" name="email" placeholder="Enter email" name="email">
+            </div>
+          </div>
+            
+
+          <div class="form-group row col-sm-10" >
+            <label class="col-sm-4 col-form-label" for="pwd">Password:</label>
+            <div class="col-sm-10">          
+              <input pattern="[A-Za-z0-9]{6,12}" required type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+              Password length must be in range of 6-12 characters and no special characters are allowed.
+            </div>
+
+          </div>
+
+            <div class="form-group row col-sm-10" > <!-- Street 1 -->
+                <label for="street1_id" class="col-sm-4 col-form-label">Street Address 1</label>
+                <div class="col-sm-10">          
+                <input required type="text" class="form-control" name="address1" id="street1_id" placeholder="Street address, P.O. box, company name, c/o">
+                </div>
+            </div>					
+            
+                                    
+            <div class="form-group row col-sm-10" > <!-- Street 2 -->
+                <label for="street2_id" class="col-sm-4 col-form-label">Street Address 2</label>
+                <div class="col-sm-10">          
+                <input required type="text" class="form-control" name="address2" id="street2_id" placeholder="Apartment, suite, unit, building, floor, etc.">
+                </div>
+            </div>	
+            
+            <div class="form-group row col-sm-10" > <!-- Zip Code-->
+                <label for="zip_id" class="col-sm-4 col-form-label">Zip Code</label>               
+                <div class="col-sm-10">          
+                <input required type="text" class="form-control" name="zipcode" id="zip_id" placeholder="#####">
+                </div>
+            </div>
+                
+            <div class="form-group row col-sm-10" > <!-- Zip Code-->
+              <label for="zip_id" class="col-sm-4 col-form-label">Phone No.</label>               
+              <div class="col-sm-10">          
+              <input required pattern="[7-9]{1}[0-9]{9}" type="text" class="form-control" name="phone_no" id="phone_no" placeholder="123 123 4568">
+              </div>
+          </div>
+            
+            <div class="form-group row col-sm-10" > <!-- City-->
+                <label for="city_id" class="col-sm-4 col-form-label">City</label>
+                <div class="col-sm-10">          
+                <input required type="text" class="form-control" name="city" id="city_id" placeholder="Smallville">
+                </div>
+            </div>	 
+            
+            <div class="form-group row col-sm-10" > <!-- City-->
+              <label for="city_id" class="col-sm-4 col-form-label">State</label>
+              <div class="col-sm-10">          
+              <input required type="text" class="form-control" name="state" id="state_id" placeholder="Gujarat">
+              </div>
+          </div>	 
+          <div class="form-group row col-sm-10" >        
+            <div class="col-sm-4 col-form-label">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              
+            </div>
+          </div>
+            <br>
+        </form>
+      </div>
+
+</body>
+</html>

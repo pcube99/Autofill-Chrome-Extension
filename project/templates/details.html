@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>Auto Fill</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../static/index.css">
+        <script src="../js/index.js"></script>
+        <style>
+      body{
+        background-image: url("../static/background.jpg");
+          }
+  
+      </style>
+</head>
+<body>
+<nav class="navbar navbar-light navbar-expand-lg" style="background-color: #f9ccc2 ;"> 
+       <div class="container-fluid">
+          <div class="navbar-header ">
+            <a class="navbar-brand" href="/"><strong class="black_text">Auto-Fill (Application Bharo)</strong></a>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+              {% if session.email %}
+              <li><a href="/"><span class="glyphicon glyphicon-home black_text"></span> <strong class="black_text">Home</strong></a></li>
+              <li><a href="{{ url_for('details') }}"><span class="glyphicon glyphicon-cog black_text"></span> <strong class="black_text">Details</strong></a></li>
+              <li><a href="help"><span class="glyphicon glyphicon-question-sign black_text"></span> <strong class="black_text">Help</strong></a></li>
+              <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-in black_text"></span> <strong class="black_text">Log out</strong></a></li>
+  
+              {% else %}
+              <li><a href="signup"><span class="glyphicon glyphicon-user black_text"></span> <strong class="black_text">Sign Up</strong></a></li>
+              <li><a href="login_website"><span class="glyphicon glyphicon-log-in black_text"></span> <strong class="black_text">Log in</strong></a></li>
+              <li><a href="help"><span class="glyphicon glyphicon-question-sign black_text"></span> <strong class="black_text">Help</strong></a></li>
+  
+              {% endif %}
+          </ul>
+        </div>
+</nav>
+<div id="details_title">
+        User Details
+</div>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-danger alert-dismissible fade in" style="width: auto; display: inline-block; 
+  margin-left: 40%;">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      {{message}}
+    </div> 
+  {% endfor %}
+{% endif %}
+{% endwith %}
+
+<form action="{{ url_for('details') }}" method="post">
+  <div class="col-sm-10 col-form-label button_center" id="details_button">
+    <button type="submit" class="btn btn-primary btn-lg" name="updatedetails1">Update Details</button>
+  </div>
+<div id="details">
+
+<br>
+
+{% block main %}
+<table class="table">
+        <tbody>
+            {% for row in rows %}
+           
+            {% if row not in "_id" and row not in "times" and row not in "isverified" %}          
+            <tr id="details_table">
+            <td >    {{row}}</td>
+            {% if row in "password" %}
+            <td>   <input type="password" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
+            {% else %}
+            <td>   <input type="text" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
+          </tr>
+            {% endif %}
+            
+            {%endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
+{% endblock %}
+</form>
+</body>
+</html>
