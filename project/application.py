@@ -63,8 +63,8 @@ def login_website():
     if request.method == 'POST': 
         users = mongo.db.users
         login_use = users.find_one({'email' : request.form['email']})
-        session['isverified'] = login_use['isverified']
         if login_use:
+            session['isverified'] = login_use['isverified']
             x = login_use['password']
             if (request.form['pwd'] == password.decrypt(x[0],x[1])):
                 session['email'] = request.form['email']
