@@ -96,7 +96,7 @@ def email_verification(receiver):
     msg = MIMEMultipart()
     global otp
     otp = randint(1000, 9999)
-    otp_array.append(otp)
+    otp_array.append(str(otp))
     print("otp " + str(otp))
     msg['From'] = 'autofill.sen@gmail.com'
     msg['To'] = receiver
@@ -239,7 +239,7 @@ def verify():
         if request.method == "POST":
             print(otp_array)
             print(request.form['otp'])
-            if(request.form['otp'] in otp_array):
+            if(str(request.form['otp']) in otp_array):
                 otp_array.remove(request.form['otp'])
                 users.update({'email': existing_user['email']}, {'$set' : {'isverified' : "true"}})
                 return redirect(url_for('login_website'))

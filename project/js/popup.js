@@ -68,7 +68,6 @@ async function fill(data, data1,xx ){
         console.log(resultt.login_response);
         console.log(xx);
         console.log(data1[xx]);
-        console.log(resultt.login_response[data1[xx]]);
         console.log(dta);
          chrome.storage.local.set({d1 : data[yy]['name']},function(){
            chrome.storage.local.set({d2: dta},function(){
