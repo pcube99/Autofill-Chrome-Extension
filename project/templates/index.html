@@ -23,7 +23,7 @@
             <a class="navbar-brand" href="/"><strong class="black_text">Auto-Fill (Application Bharo)</strong></a>
           </div>
           <ul class="nav navbar-nav navbar-right">
-            {% if session.verified %}
+            {% if session.verified == 'true' %}
             <li><a href="/"><span class="glyphicon glyphicon-home black_text"></span> <strong class="black_text">Home</strong></a></li>
             <li><a href="{{ url_for('details') }}"><span class="glyphicon glyphicon-cog black_text"></span> <strong class="black_text">Details</strong></a></li>
             <li><a href="help"><span class="glyphicon glyphicon-question-sign black_text"></span> <strong class="black_text">Help</strong></a></li>
@@ -38,7 +38,7 @@
           </ul>
         </div>
 </nav>
-{% if session.verified %}
+{% if session.verified == 'true' %}
 <h1 id="front_text" class='deepshadow'>Hello, {{session.name}}</h1>
 <h1 id="front_text" class='deepshadow'>You have used autofill, {{session.times}} times.</h1>
 

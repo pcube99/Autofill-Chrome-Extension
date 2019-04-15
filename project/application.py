@@ -89,6 +89,7 @@ def login_website():
             flash(message)
     return render_template('login.html')
 def email_verification(receiver):
+    session.clear()
     msg = MIMEMultipart()
     global otp
     otp = randint(1000, 9999)
@@ -109,6 +110,8 @@ def email_verification(receiver):
     mailserver.quit()
     return otp
 def forget_password(receiver):
+    session.clear()
+
     msg = MIMEMultipart()
     global change_password
     char_set = string.ascii_uppercase + string.digits
