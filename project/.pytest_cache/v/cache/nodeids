@@ -1,0 +1,13 @@
+[
+  "test_app.py::TestMyApp::test_404",
+  "test_app.py::TestMyApp::test_autofill",
+  "test_app.py::TestMyApp::test_autoupdate",
+  "test_app.py::TestMyApp::test_details",
+  "test_app.py::TestMyApp::test_help",
+  "test_app.py::TestMyApp::test_login",
+  "test_app.py::TestMyApp::test_login1",
+  "test_app.py::TestMyApp::test_loginwebsite",
+  "test_app.py::TestMyApp::test_logout",
+  "test_app.py::TestMyApp::test_main",
+  "test_app.py::TestMyApp::test_signup"
+]

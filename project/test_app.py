@@ -15,7 +15,7 @@ class TestMyApp(unittest.TestCase):
         self.assertEqual(rv.status, '200 OK')
 
     def test_login1(self):
-        rv = self.app.get('/login?email=pa@p.com&password=1234')
+        rv = self.app.get('/login?email=pa&password=1234')
         self.assertEqual(rv.status, '200 OK')
 	
 	
