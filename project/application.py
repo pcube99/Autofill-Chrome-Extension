@@ -43,7 +43,7 @@ def login():
             if (passwor == pss):
                 print("HIIII")
                 session['email'] = email
-                session['name'] = login_use['firstname']
+                session['name'] = login_use['name']
                 session['times'] = login_use['times']
                 login_user = []
                 for i in login_use:
@@ -71,7 +71,7 @@ def login_website():
             x = login_use['password']
             if (request.form['pwd'] == password.decrypt(x[0],x[1])):
                 session['email'] = request.form['email']
-                session['name'] = login_use['firstname']
+                session['name'] = login_use['name']
                 session['times'] = login_use['times']
                 if login_use['isverified'] == 'false':
                     message = Markup("<strong>Verify your email !</strong>")
