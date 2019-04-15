@@ -21,6 +21,7 @@ app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongo
 
 mongo = PyMongo(app)
 otp = 0
+otp_array =[]
 change_password = ''
 @app.route('/')
 def index():
@@ -95,6 +96,7 @@ def email_verification(receiver):
     msg = MIMEMultipart()
     global otp
     otp = randint(1000, 9999)
+    otp_array.append(otp)
     print("otp " + str(otp))
     msg['From'] = 'autofill.sen@gmail.com'
     msg['To'] = receiver
@@ -235,9 +237,10 @@ def verify():
     existing_user = users.find_one({'email' : session['email']})
     if existing_user['isverified'] == 'false':
         if request.method == "POST":
-            print(otp)
+            print(otp_array)
             print(request.form['otp'])
-            if(request.form['otp'] == str(otp)):
+            if(request.form['otp'] in otp_array):
+                otp_array.remove(request.form['otp'])
                 users.update({'email': existing_user['email']}, {'$set' : {'isverified' : "true"}})
                 return redirect(url_for('login_website'))
             else:
