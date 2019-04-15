@@ -356,7 +356,6 @@ function documentEvents3() {
     });
       });
       console.log("not request");
-    
       httpGetAsync(("https://afss.herokuapp.com/autofill?url=" + url), function(response) {
         var ans=response;
         if(ans){
@@ -393,6 +392,25 @@ function documentEvents3() {
   });
   });
   });
+  chrome.storage.local.get(['login_email'],function(result111){
+    chrome.storage.local.get(['login_password'],function(result112){
+  httpGetAsync(("https://afss.herokuapp.com/login?email=" + result111.login_email +"&password=" + result112.login_password), function(response) {
+    chrome.storage.local.set({login_response : response},function(){
+    });
+  });
+
+  chrome.storage.local.get(['curr'],function(result1){
+    chrome.storage.local.get(['login_response'],function(result2){
+      if(result2.login_response['company'] == result1.curr){
+        console.log("Tested");
+      }
+    }); 
+    
+}); 
+});
+  });
+         
+
   console.log("out ");
   if(typeof url === "undefined")
   {

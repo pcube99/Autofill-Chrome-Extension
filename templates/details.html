@@ -66,11 +66,15 @@
         <tbody>
             {% for row in rows %}
            
-            {% if row not in "_id" and row not in "password" and row not in "times" %}          
+            {% if row not in "_id" and row not in "times" %}          
             <tr id="details_table">
             <td >    {{row}}</td>
+            {% if row in "password" %}
+            <td>   <input type="password" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
+            {% else %}
             <td>   <input type="text" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
-            </tr>
+          </tr>
+            {% endif %}
             
             {%endif %}
           {% endfor %}

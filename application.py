@@ -12,6 +12,8 @@ import time
 from flask import jsonify
 import password
 from random import randint
+import string
+import random
 app = Flask(__name__)
 app.config["MONGO_DBNAME"] = "autofill"
 app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongodb.net:27017,cluster0-shard-00-01-tqm1v.mongodb.net:27017,cluster0-shard-00-02-tqm1v.mongodb.net:27017/autofill?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
@@ -19,6 +21,7 @@ app.config["MONGO_URI"] = "mongodb://ppp:PANKIL@cluster0-shard-00-00-tqm1v.mongo
 mongo = PyMongo(app)
 msg = MIMEMultipart()
 otp = 0
+change_password = ''
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -67,6 +70,10 @@ def login_website():
                 session['email'] = request.form['email']
                 session['name'] = login_use['firstname']
                 session['times'] = login_use['times']
+                if login_use['isverified'] == 'false':
+                    message = Markup("<strong>Verify your email !</strong>")
+                    flash(message)
+                    return redirect(url_for('verify'))
                 login_user = []
                 for i in login_use:
                     if(i in "_id"):
@@ -85,7 +92,7 @@ def email_verification(receiver):
     global otp
     otp = randint(1000, 9999)
     print("otp " + str(otp))
-    msg['From'] = 'thecubeofp@gmail.com'
+    msg['From'] = 'autofill.sen@gmail.com'
     msg['To'] = receiver
     msg['Subject'] = 'Autofill : Verify your email'
     message = 'Autofill account \n\nVerify your email address\n\nTo finish setting up your Autofill account, we just need to make sure this email address is yours.\n\nTo verify your email address use this security code: ' + str(otp)+'\n\nIf you did not request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.\n\nThanks,\nThe Autofill Team'
@@ -95,10 +102,27 @@ def email_verification(receiver):
     mailserver.ehlo()
     mailserver.starttls()
     mailserver.ehlo()
-    mailserver.login('thecubeofp@gmail.com', 'iamp.cube')
-    mailserver.sendmail('thecubeofp@gmail.com',receiver,msg.as_string())
+    mailserver.login('autofill.sen@gmail.com', 'Autofill@123')
+    mailserver.sendmail('autofill.sen@gmail.com',receiver,msg.as_string())
     mailserver.quit()
     return otp
+def forget_password(receiver):
+    global change_password
+    char_set = string.ascii_uppercase + string.digits
+    change_password = ''.join(random.sample(char_set*6, 6))
+    msg['From'] = 'autofill.sen@gmail.com'
+    msg['To'] = receiver
+    msg['Subject'] = 'Autofill : Reset your password'
+    message = 'Autofill account \n\nPassword reset for your Autofill account is requested.\n\nEnter this ' + change_password+' password at reset form.\n\nThanks,\nThe Autofill Team'
+    msg.attach(MIMEText(message))
+    mailserver = smtplib.SMTP('smtp.gmail.com',587)
+    mailserver.ehlo()
+    mailserver.starttls()
+    mailserver.ehlo()
+    mailserver.login('autofill.sen@gmail.com', 'Autofill@123')
+    mailserver.sendmail('autofill.sen@gmail.com',receiver,msg.as_string())
+    mailserver.quit()
+    return change_password
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -164,19 +188,32 @@ def details():
     rows = {}
     users = mongo.db.users
     existing_user = users.find_one({'email' : session['email']})
+    x = existing_user['password']
+    print(x)
     if(request.method == 'GET'):
         for i in existing_user:
-            rows[str(i)] = str(existing_user[str(i)]) 
+            if str(i) in "password":
+                rows[str(i)] = str(password.decrypt(x[0],x[1]))
+            else:
+                rows[str(i)] = str(existing_user[str(i)]) 
         #print(rows)
         return render_template("details.html",rows=rows)
 
     elif(request.method == 'POST'):
         #print(existing_user['email'])
         for j in existing_user:
-            if(j not in "_id" and j not in "password" and j not in "times"):
-                rows[str(j)] = str(existing_user[str(j)]) 
-                #print(request.form['first_name'])
-                users.update({'email': existing_user['email']}, {'$set' : {str(j) : request.form[str(j)]}})
+            if(j not in "_id" and j not in "times"):
+                if j in "password":
+                    rows[str(j)] = password.encrypt(request.form[str(j)])[0]
+                    passw = password.encrypt(request.form[str(j)])
+                    op = []
+                    op.append(passw[0])
+                    op.append(passw[1])
+                    users.update({'email': existing_user['email']}, {'$set' : {str(j) : op}})
+
+                else:
+                    rows[str(j)] = str(existing_user[str(j)]) 
+                    users.update({'email': existing_user['email']}, {'$set' : {str(j) : request.form[str(j)]}})
         #print(rows)
         message = Markup("<strong> Details Successfully updated.</strong>")
         flash(message)
@@ -191,17 +228,20 @@ def help():
     return render_template('help.html')
 @app.route('/verify', methods=['POST', 'GET'])
 def verify():
-    if request.method == "POST":
-        print(otp)
-        print(request.form['otp'])
-        if(request.form['otp'] == str(otp)):
-            users = mongo.db.users
-            existing_user = users.find_one({'email' : session['email']})
-            users.update({'email': existing_user['email']}, {'$set' : {'isverified' : "true"}})
-            return render_template('login.html')
-        else:
-            message = Markup("<strong>Wrong OTP , Try again !</strong>")
-            flash(message)
+    users = mongo.db.users
+    existing_user = users.find_one({'email' : session['email']})
+    if existing_user['isverified'] == 'false':
+        if request.method == "POST":
+            print(otp)
+            print(request.form['otp'])
+            if(request.form['otp'] == str(otp)):
+                users.update({'email': existing_user['email']}, {'$set' : {'isverified' : "true"}})
+                return redirect(url_for('login_website'))
+            else:
+                message = Markup("<strong>Wrong OTP , Try again !</strong>")
+                flash(message)
+    else:
+        redirect(url_for('login'))
     return render_template('verification.html')
 
 @app.route('/resend', methods=['POST', 'GET'])
@@ -212,6 +252,34 @@ def resend():
         email_verification(session['email'])
     return render_template('verification.html')
 
+@app.route('/forgetpassword', methods=['POST', 'GET'])
+def forgetpassword():
+    if request.method == "POST":
+        session['email'] = request.form['reset_email']
+        forget_password(request.form['reset_email'])
+        return redirect(url_for('changedpassword'))
+    return render_template('forgetpassword.html')
+
+@app.route('/changedpassword', methods=['POST', 'GET'])
+def changedpassword():
+    if request.method == "POST":
+        if(change_password == request.form['changed_password']):
+            passw = password.encrypt(change_password)
+            opp = []
+            opp.append(passw[0])
+            opp.append(passw[1])
+            users = mongo.db.users
+            existing_user = users.find_one({'email' : session['email']})
+            users.update({'email': existing_user['email']}, {'$set' : {'password' : opp}})
+            return redirect(url_for('login_website'))
+        else:
+            message = Markup("<strong>Please enter the password which is sent to your registered email.</strong>")
+            flash(message)
+    return render_template('changepassword.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 app.secret_key = 'mysecret'
 
 if __name__ == '__main__':  
