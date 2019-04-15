@@ -240,7 +240,7 @@ def verify():
             print(otp_array)
             print(request.form['otp'])
             if(str(request.form['otp']) in otp_array):
-                otp_array.remove(request.form['otp'])
+                otp_array.remove(str(request.form['otp']))
                 users.update({'email': existing_user['email']}, {'$set' : {'isverified' : "true"}})
                 return redirect(url_for('login_website'))
             else:
