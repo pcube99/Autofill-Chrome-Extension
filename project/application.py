@@ -6,6 +6,7 @@ from flask import Flask, render_template, url_for, request, session, redirect,Ma
 from flask_pymongo import PyMongo
 import autofill
 import os
+import re
 import sys ##
 from functools import wraps
 import time
@@ -29,6 +30,8 @@ def index():
 def login():
     email = request.args.get('email', None)
     passwor = request.args.get('password', None)
+    if email in '' or passwor in '' or '@' not in email or not re.match(r'^\w+$',passwor ) or len(passwor) < 6:
+        return "Invalid"
     if request.method == 'POST' or request.method == 'GET': 
         users = mongo.db.users
         login_use = users.find_one({'email' : email})

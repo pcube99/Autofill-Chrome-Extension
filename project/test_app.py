@@ -11,9 +11,16 @@ class TestMyApp(unittest.TestCase):
         assert rv.status == '200 OK'
 
     def test_login(self):
-        rv = self.app.get('/login?email=pan@p.com&password=123456')
+        rv = self.app.get('/login?email=pa@.com&password=123456')
         self.assertEqual(rv.status, '200 OK')
+        rv = self.app.get('/autofill?url=https://www.github.com')
+        self.assertEqual(rv.status, '500 INTERNAL SERVER ERROR')
 
+    def test_login1(self):
+        rv = self.app.get('/login?email=pa@p.com&password=1234')
+        self.assertEqual(rv.status, '200 OK')
+	
+	
     def test_404(self):
         rv = self.app.get('/other')
         self.assertEqual(rv.status, '404 NOT FOUND')
@@ -38,6 +45,10 @@ class TestMyApp(unittest.TestCase):
         rv = self.app.get('/autoupdate')
         self.assertEqual(rv.status, '500 INTERNAL SERVER ERROR')
 
-    
-    
+    def test_logout(self):
+        rv = self.app.get('/logout')
+        self.assertEqual(rv.status, '302 FOUND')
 
+    def test_loginwebsite(self):
+        rv = self.app.get('/login_website')
+        self.assertEqual(rv.status, '200 OK')    
