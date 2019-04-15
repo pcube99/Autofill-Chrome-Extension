@@ -71,7 +71,7 @@
             <td >    {{row}}</td>
             {% if row in "password" %}
             <td>   <input pattern="[A-Za-z0-9]{6,12}" type="password" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
-            {% else if row in "phoneno%}
+            {% elif row in "phoneno%}
             <td>   <input pattern="[7-9]{1}[0-9]{9}" type="text" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
               {% else %}
               <td>   <input type="text" id="{{row}}" name="{{row}}" value="{{rows[row]}}" class="black_text"></input></td>
