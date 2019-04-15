@@ -95,6 +95,7 @@ def email_verification(receiver):
     msg['From'] = 'autofill.sen@gmail.com'
     msg['To'] = receiver
     msg['Subject'] = 'Autofill : Verify your email'
+    message = ''
     message = 'Autofill account \n\nVerify your email address\n\nTo finish setting up your Autofill account, we just need to make sure this email address is yours.\n\nTo verify your email address use this security code: ' + str(otp)+'\n\nIf you did not request this code, you can safely ignore this email. Someone else might have typed your email address by mistake.\n\nThanks,\nThe Autofill Team'
     msg.attach(MIMEText(message))
 
@@ -114,6 +115,7 @@ def forget_password(receiver):
     msg['From'] = 'autofill.sen@gmail.com'
     msg['To'] = receiver
     msg['Subject'] = 'Autofill : Reset your password'
+    message = ''
     message = 'Autofill account \n\nPassword reset for your Autofill account is requested.\n\nEnter this ' + change_password+' password at reset form.\n\nThanks,\nThe Autofill Team'
     msg.attach(MIMEText(message))
     mailserver = smtplib.SMTP('smtp.gmail.com',587)
