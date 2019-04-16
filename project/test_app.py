@@ -47,27 +47,53 @@ class TestMyApp(unittest.TestCase):
 
     #without login check details page
     def test_details(self):
-        rv = self.myapp.get('/details')
-        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'please login')
-    
+        rv = self.myapp.get('/details?email=pp@p.co&password=123456')
+        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'wrong login')
+
+    #invalid login while showing details
+    def test_details2(self):
+        rv = self.myapp.get('/details?email=pp.x&password=123456')
+        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'Invalid')
+
     #login and then check details page
     def test_details1(self):
-        rv = self.myapp.get('login?email=milandungrani4@gmail.com&password=1234')
-        rv = self.myapp.get('/details')
-        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'please login')
+        rv1 = self.myapp.get('/details?email=milandungrani42@gmail.com&password=12345678')
+        self.assertEqual(str(rv1.data).split('b')[1].split("'")[1], 'wrong password or email')
+
+    #login and then check details page
+    def test_details3(self):
+        rv1 = self.myapp.get('/details?email=milandungrani42@gmail.com&password=123456')
+        self.assertEqual(str(rv1.data).split('b')[1].split("'")[1], 'success')
     
-    # def test_autofill(self):
-    #     rv = self.myapp.get('afss.herokuapp.com/autofill?url=https://www.github.com')
-    #     self.assertEqual(rv.status, '500 INTERNAL SERVER ERROR')
+    #for logout
+    def test_logout(self):
+        rv = self.myapp.get('/logout')
+        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'logouted')
+
+    #autofill after successful login
+    def test_autofill(self):
+        rv = self.myapp.get('/autofill?email=milandungrani42@gmail.com&password=123456&url=https://www.github.com')
+        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'success')
+
+    #autofill after wrong login
+    def test_autofill2(self):
+        rv = self.myapp.get('/autofill?email=milandungrani42@gmail.com&password=12345&url=https://www.github.com')
+        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'Invalid')
     
+    #autofill after wrong login details
+    def test_autofill3(self):
+        rv = self.myapp.get('/autofill?email=pp@p&password=1234564&url=https://www.github.com')
+        self.assertEqual(str(rv.data).split('b')[1].split("'")[1], 'wrong login')
+
+    #checking weather page is opening or not
+    def test_loginwebsite(self):
+        rv = self.myapp.get('/login_website')
+        self.assertEqual(rv.status, '200 OK') 
+        
     # def test_autoupdate(self):
     #     rv = self.myapp.get('afss.herokuapp.com/autoupdate')
     #     self.assertEqual(rv.status, '500 INTERNAL SERVER ERROR')
 
-    # def test_logout(self):
-    #     rv = self.myapp.get('afss.herokuapp.com/logout')
-    #     self.assertEqual(rv.status, '302 FOUND')
 
-    # def test_loginwebsite(self):
-    #     rv = self.myapp.get('afss.herokuapp.com/login_website')
-    #     self.assertEqual(rv.status, '200 OK')    
+
+       

@@ -163,9 +163,10 @@ def signup():
 def autofill_text():
     users = mongo.db.users
     url = request.args.get('url', None)
+    email = request.args.get('email', None)
+    passwor = request.args.get('password', None)
     print(url)
-    #existing_user = users.find_one({'email' : session['email']})
-
+    existing_user = users.find_one({'email' : email})
     if(request.method == 'POST'):
        # print(str(int(existing_user['times'])+1))
         users.update({'email': existing_user['email']}, {'$set' : {'times' : str(int(existing_user['times'])+1)}})
@@ -174,8 +175,21 @@ def autofill_text():
         #print('after' +  session['times'])
         return render_template("autoupdate.html")
     else:
-        return jsonify(autofill.func(url))
-         
+        if email in '' or passwor in '' or '@' not in email or not re.match(r'^\w+$',passwor ) or len(passwor) < 6:
+            return "Invalid"
+        users = mongo.db.users
+        login_use = users.find_one({'email' : email})
+    # print(login_user)
+        if login_use:
+            x = login_use['password']
+            pss = password.decrypt(x[0],x[1])
+            if (passwor == pss):
+                return "success"
+            else:
+                return "wrong password or email"
+        else:
+            return 'wrong login'
+            
 @myapp.route('/autoupdate', methods=['POST', 'GET'])
 def autoupdate_text():
     idd = request.args.get('id', None)
@@ -190,45 +204,43 @@ def autoupdate_text():
 @myapp.route('/details', methods=['POST', 'GET'])
 def details():
     rows = {}
-    try:
+    email = request.args.get('email', None)
+    passwor = request.args.get('password', None)
+    if request.method == 'POST' or request.method == 'GET': 
+        if email in '' or passwor in '' or '@' not in email or not re.match(r'^\w+$',passwor ) or len(passwor) < 6:
+            return "Invalid"
         users = mongo.db.users
-        existing_user = users.find_one({'email' : session['email']})
-        x = existing_user['password']
-        print(x)
-    except:
-        return "please login"
-    if(request.method == 'GET'):
-        for i in existing_user:
-            if str(i) in "password":
-                rows[str(i)] = str(password.decrypt(x[0],x[1]))
+        login_use = users.find_one({'email' : email})
+    # print(login_user)
+        if login_use:
+            x = login_use['password']
+            pss = password.decrypt(x[0],x[1])
+            if (passwor == pss):
+                login_user = []
+                for i in login_use:
+                    if(i in "_id"):
+                        continue
+                    if "password" in i:
+                        xx = login_use[str(i)]
+                        login_user.append({str(i) : password.decrypt(xx[0],xx[1])})
+                    else:
+                        login_user.append({str(i) : login_use[str(i)]})
+                        x = login_use['password']
+                        for i in login_use:
+                            if str(i) in "password":
+                                rows[str(i)] = str(password.decrypt(x[0],x[1]))
+                            else:
+                                rows[str(i)] = str(login_use[str(i)]) 
+                        #print(rows)
+                        return "success"
             else:
-                rows[str(i)] = str(existing_user[str(i)]) 
-        #print(rows)
-        return render_template("details.html",rows=rows)
-
-    elif(request.method == 'POST'):
-        #print(existing_user['email'])
-        for j in existing_user:
-            if(j not in "_id" and j not in "times" and j not in "isverified"):
-                if j in "password":
-                    rows[str(j)] = password.encrypt(request.form[str(j)])[0]
-                    passw = password.encrypt(request.form[str(j)])
-                    op = []
-                    op.append(passw[0])
-                    op.append(passw[1])
-                    users.update({'email': existing_user['email']}, {'$set' : {str(j) : op}})
-
-                else:
-                    rows[str(j)] = str(existing_user[str(j)]) 
-                    users.update({'email': existing_user['email']}, {'$set' : {str(j) : request.form[str(j)]}})
-        #print(rows)
-        message = Markup("<strong> Details Successfully updated.</strong>")
-        flash(message)
-        return redirect(url_for('details'))
+                return "wrong password or email"
+        else:
+            return 'wrong login'
 @myapp.route('/logout')
 def logout():
 	session.clear()
-	return redirect(url_for('index'))
+	return "logouted"
 
 @myapp.route('/help')
 def help():
